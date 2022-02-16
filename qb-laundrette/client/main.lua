@@ -1,14 +1,7 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
-    while QBCore == nil do
-        TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-        Citizen.Wait(200)
-    end
-end)
 
 -- Code
-
 local washing = false
 local timer = 0
 local collect = false
@@ -50,7 +43,7 @@ function SetClosestLaundrette()
     ClosestLaundrette = current
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(500)
     QBCore.Functions.TriggerCallback('qb-laundrette:server:GetData', function(data)
         Config.CurrentLaundrette = data.CurrentLaundrette
@@ -58,11 +51,11 @@ Citizen.CreateThread(function()
 
     while true do
         SetClosestLaundrette()
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Config.CurrentLaundrette = math.random(1, #Config.Locations["laundrette"])
 
     while true do
@@ -83,17 +76,17 @@ Citizen.CreateThread(function()
             end
         end
         if not inRange then
-            Citizen.Wait(1000)
+            Wait(1000)
         end
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
-Citizen.CreateThread(function(amt)
+CreateThread(function(amt)
 	while true do 
-		Citizen.Wait(5000)
+		Wait(5000)
         while InsideLaundrette do
-            Citizen.Wait(1)
+            Wait(1)
             local inRange = false
             local pos = GetEntityCoords(PlayerPedId())
             local ped = PlayerPedId()
@@ -231,9 +224,8 @@ Citizen.CreateThread(function(amt)
     end 
 end)
 
-RegisterNetEvent('qb-laundrette:client:washTimer')
-AddEventHandler('qb-laundrette:client:washTimer', function()
-        Citizen.Wait(0)
+RegisterNetEvent('qb-laundrette:client:washTimer', function()
+        Wait(0)
         local pos = GetEntityCoords(PlayerPedId())
         local ped = PlayerPedId()
         local inRange = false
@@ -256,14 +248,14 @@ AddEventHandler('qb-laundrette:client:washTimer', function()
                 washCoordY = washLocations.pFour.y
                 washCoordZ = washLocations.pFour.z
             end
-            Citizen.Wait(0)
+            Wait(0)
             DrawText3Ds(washCoordX, washCoordY, washCoordZ, "Time left on washer: " .. timer .. ' seconds.')               
         end
 end)
 
 function collectMoney(amt)
 
-    Citizen.CreateThread(function()
+    CreateThread(function()
 
     while collect do
         if washer == 1 then
@@ -288,7 +280,7 @@ function collectMoney(amt)
         local pos = GetEntityCoords(PlayerPedId())
         local ped = PlayerPedId()
     
-        Citizen.Wait(0)
+        Wait(0)
         DrawText3Ds(collectCoordX, collectCoordY, collectCoordZ, "~g~E~w~ - Collect Clean Money")
 
         if GetDistanceBetweenCoords(pos.x, pos.y, pos.z, collectCoordX,collectCoordY, collectCoordZ, true) < 0.5 then
@@ -321,8 +313,7 @@ function collectMoney(amt)
     end)
 end
 
-RegisterNetEvent('qb-laundrette:client:startTimer')
-AddEventHandler('qb-laundrette:client:startTimer', function(amt)
+RegisterNetEvent('qb-laundrette:client:startTimer', function(amt)
 
     washing = true
     timer = math.ceil(0.005 * amt)
@@ -340,12 +331,11 @@ AddEventHandler('qb-laundrette:client:startTimer', function(amt)
 
                 collectMoney(amt)
             end
-            Citizen.Wait(1000)
+            Wait(1000)
         end
 end)
 
-RegisterNetEvent('qb-laundrette:client:UseLaundretteKey')
-AddEventHandler('qb-laundrette:client:UseLaundretteKey', function(mwkey)
+RegisterNetEvent('qb-laundrette:client:UseLaundretteKey', function(mwkey)
     if ClosestLaundrette == Config.CurrentLaundrette then
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -366,12 +356,12 @@ function EnterLaundrette()
 
     OpenDoorAnimation()
     InsideLaundrette = true
-    Citizen.Wait(500)
+    Wait(500)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     SetEntityCoords(ped, Config.Locations["exit"].coords.x, Config.Locations["exit"].coords.y, Config.Locations["exit"].coords.z - 0.98)
     SetEntityHeading(ped, Config.Locations["exit"].coords.h)
-    Citizen.Wait(1000)
+    Wait(1000)
     DoScreenFadeIn(250)
 end
 
@@ -384,13 +374,13 @@ function ExitLaundrette()
         coords = {x = 895.96, y = -3245.798, z = -98.24, h = 265.75, r = 1.0},
     }
     OpenDoorAnimation()
-    Citizen.Wait(500)
+    Wait(500)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     SetEntityCoords(ped, Config.Locations["laundrette"][Config.CurrentLaundrette].coords.x, Config.Locations["laundrette"][Config.CurrentLaundrette].coords.y, Config.Locations["laundrette"][Config.CurrentLaundrette].coords.z - 0.98)
     SetEntityHeading(ped, Config.Locations["laundrette"][Config.CurrentLaundrette].coords.h)
     InsideLaundrette = false
-    Citizen.Wait(1000)
+    Wait(1000)
     DoScreenFadeIn(250)
 end
 
@@ -398,7 +388,7 @@ function LoadAnimationDict(dict)
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
         RequestAnimDict(dict)
-        Citizen.Wait(1)
+        Wait(1)
     end
 end
 
@@ -406,7 +396,7 @@ function OpenDoorAnimation()
     local ped = PlayerPedId()
     LoadAnimationDict("anim@heists@keycard@") 
     TaskPlayAnim(ped, "anim@heists@keycard@", "exit", 5.0, 1.0, -1, 16, 0, 0, 0, 0)
-    Citizen.Wait(400)
+    Wait(400)
     ClearPedTasks(ped)
 end
 
@@ -418,10 +408,10 @@ end
 function WashAnimation()
     loadAnimDict("mp_car_bomb")
     TaskPlayAnim(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic" ,3.0, 3.0, -1, 16, 0, false, false, false)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while washing do
             TaskPlayAnim(PlayerPedId(), "mp_car_bomb", "car_bomb_mechanic", 3.0, 3.0, -1, 16, 0, 0, 0, 0)
-            Citizen.Wait(2000)
+            Wait(2000)
         end
     end)
 end
@@ -429,7 +419,7 @@ end
 function loadAnimDict(dict)
     while (not HasAnimDictLoaded(dict)) do
         RequestAnimDict(dict)
-        Citizen.Wait(5)
+        Wait(5)
     end
 end
 
@@ -453,7 +443,7 @@ local blips = {
     {title="Money Washing", colour=2, id=207}
  }
      
-Citizen.CreateThread(function()
+CreateThread(function()
 
    for _, info in pairs(blips) do
      info.blip = AddBlipForCoord(614.48, 2784.17, 43.48)

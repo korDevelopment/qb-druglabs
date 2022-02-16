@@ -1,14 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
-    while QBCore == nil do
-        TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
-        Citizen.Wait(200)
-    end
-end)
-
 -- Code
-
 local InsideCokelab = false
 local ClosestCokelab = 0
 local CurrentTask = 1
@@ -47,7 +39,7 @@ function SetClosestCokelab()
     ClosestCokelab = current
 end
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Wait(500)
     QBCore.Functions.TriggerCallback('qb-cokelab:server:GetData', function(data)
         Config.CurrentLab = data.CurrentLab
@@ -59,11 +51,11 @@ Citizen.CreateThread(function()
 
     while true do
         SetClosestCokelab()
-        Citizen.Wait(1000)
+        Wait(1000)
     end
 end)
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Config.CurrentLab = math.random(1, #Config.Locations["laboratories"])
 
     while true do
@@ -170,21 +162,21 @@ Citizen.CreateThread(function()
         end
 
         if not inRange then
-            Citizen.Wait(1000)
+            Wait(1000)
         end
 
-        Citizen.Wait(3)
+        Wait(3)
     end
 end)
 
 function StartMachine(k)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         Config.Tasks[k].started = true
         -- emote
 
         while Config.Tasks[k].timeremaining > 0 do
             Config.Tasks[k].timeremaining = Config.Tasks[k].timeremaining - 1
-            Citizen.Wait(1000)
+            Wait(1000)
         end
         -- stop emote
 
@@ -223,8 +215,7 @@ function FinishMachine(k)
     end
 end
 
-RegisterNetEvent('qb-cokelab:client:UseLabKey')
-AddEventHandler('qb-cokelab:client:UseLabKey', function(cokekey)
+RegisterNetEvent('qb-cokelab:client:UseLabKey', function(cokekey)
     if ClosestCokelab == Config.CurrentLab then
         local ped = PlayerPedId()
         local pos = GetEntityCoords(ped)
@@ -246,12 +237,12 @@ function EnterCokelab()
 
     OpenDoorAnimation()
     InsideCokelab = true
-    Citizen.Wait(500)
+    Wait(500)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     SetEntityCoords(ped, Config.Locations["exit"].coords.x, Config.Locations["exit"].coords.y, Config.Locations["exit"].coords.z - 0.98)
     SetEntityHeading(ped, Config.Locations["exit"].coords.h)
-    Citizen.Wait(1000)
+    Wait(1000)
     DoScreenFadeIn(250)
 end
 
@@ -267,13 +258,13 @@ function ExitCokelab()
     CurrentTask = GetCurrentTask()
 
     OpenDoorAnimation()
-    Citizen.Wait(500)
+    Wait(500)
     DoScreenFadeOut(250)
-    Citizen.Wait(250)
+    Wait(250)
     SetEntityCoords(ped, Config.Locations["laboratories"][Config.CurrentLab].coords.x, Config.Locations["laboratories"][Config.CurrentLab].coords.y, Config.Locations["laboratories"][Config.CurrentLab].coords.z - 0.98)
     SetEntityHeading(ped, Config.Locations["laboratories"][Config.CurrentLab].coords.h)
     InsideCokelab = false
-    Citizen.Wait(1000)
+    Wait(1000)
     DoScreenFadeIn(250)
 end
 
@@ -281,7 +272,7 @@ function LoadAnimationDict(dict)
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
         RequestAnimDict(dict)
-        Citizen.Wait(1)
+        Wait(1)
     end
 end
 
@@ -290,7 +281,7 @@ function OpenDoorAnimation()
 
     LoadAnimationDict("anim@heists@keycard@") 
     TaskPlayAnim(ped, "anim@heists@keycard@", "exit", 5.0, 1.0, -1, 16, 0, 0, 0, 0)
-    Citizen.Wait(400)
+    Wait(400)
     ClearPedTasks(ped)
 end
 
@@ -309,12 +300,12 @@ function TakeIngredients()
     local pos = GetEntityCoords(PlayerPedId(), true)
     RequestAnimDict("anim@heists@box_carry@")
     while (not HasAnimDictLoaded("anim@heists@box_carry@")) do
-        Citizen.Wait(7)
+        Wait(7)
     end
     TaskPlayAnim(PlayerPedId(), "anim@heists@box_carry@" ,"idle", 5.0, -1, -1, 50, 0, false, false, false)
     local model = GetHashKey("prop_cs_cardbox_01")
     RequestModel(model)
-    while not HasModelLoaded(model) do Citizen.Wait(0) end
+    while not HasModelLoaded(model) do Wait(0) end
     local object = CreateObject(model, pos.x, pos.y, pos.z, true, true, true)
     AttachEntityToEntity(object, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 57005), 0.05, 0.1, -0.3, 300.0, 250.0, 20.0, true, true, false, true, 1, true)
     CarryPackage = object
@@ -333,7 +324,7 @@ local blips = {
     {title="Coke Labs", colour=46, id=214}
  }
      
-Citizen.CreateThread(function()
+CreateThread(function()
 
    for _, info in pairs(blips) do
      info.blip = AddBlipForCoord(805.8, -2379.63, 29.1)

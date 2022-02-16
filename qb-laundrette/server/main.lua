@@ -1,9 +1,8 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-TriggerEvent('QBCore:GetObject', function(obj) QBCore = obj end)
 
 -- Code
 
-Citizen.CreateThread(function()
+CreateThread(function()
     Config.CurrentLaundrette = math.random(1, #Config.Locations["laundrette"])
 end)
 
@@ -26,8 +25,7 @@ function GenerateRandomLaundrette()
     return Laundrette
 end
 
-RegisterNetEvent("qb-laundrette:server:checkInv")
-AddEventHandler("qb-laundrette:server:checkInv", function()
+RegisterNetEvent("qb-laundrette:server:checkInv", function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -41,8 +39,7 @@ AddEventHandler("qb-laundrette:server:checkInv", function()
         end
 end)
 -- itemData.info.worth
-RegisterNetEvent("qb-laundrette:server:giveMoney")
-AddEventHandler("qb-laundrette:server:giveMoney", function(amt)
+RegisterNetEvent("qb-laundrette:server:giveMoney", function(amt)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     payment = math.random(11000,13000)
