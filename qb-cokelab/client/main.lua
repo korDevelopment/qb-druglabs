@@ -130,8 +130,8 @@ Citizen.CreateThread(function()
                                     if not Config.Tasks[CurrentTask].done then
                                         DrawText3Ds(Config.Tasks[CurrentTask].coords.x, Config.Tasks[CurrentTask].coords.y, Config.Tasks[CurrentTask].coords.z - 0.4, '[E] Start Process')
                                         if IsControlJustPressed(0, Keys["E"]) then
+					    PrepareProcessAnim()
                                             StartMachine(CurrentTask)
-                                            TaskStartScenarioInPlace(PlayerPedId(), "PROP_HUMAN_BUM_BIN", 0, true)
                                             QBCore.Functions.Progressbar("fullcut_cycle_v6_cokecutter", "Processing..", 12000, false, true, {}, {}, {}, {}, function() -- Done
                                                 ClearPedTasks(PlayerPedId())
                                             end)
@@ -347,3 +347,9 @@ Citizen.CreateThread(function()
      EndTextCommandSetBlipName(info.blip)
    end
 end)
+
+function PrepareProcessAnim()
+    local ped = PlayerPedId()
+    TaskPlayAnim(ped, 'anim@amb@business@coc@coc_unpack_cut@', 'fullcut_cycle_v6_cokecutter', 8.0, 8.0, -1, 50, 0, false, false, false)
+    -- TaskStartScenarioInPlace(ped, "WORLD_HUMAN_GARDENER_PLANT", 0, true)
+end
