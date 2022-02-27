@@ -7,3 +7,5 @@ I did this to draw attention away from him as people constantly ask him how to u
 His druglabs were rushed, was even said so by him. He has created new paid ones.
 
 Yes, I did ask him for permission to do this.
+
+Thank you: trclassic92, and 
