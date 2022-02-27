@@ -8,4 +8,6 @@ His druglabs were rushed, was even said so by him. He has created new paid ones.
 
 Yes, I did ask him for permission to do this.
 
-Thank you: trclassic92, and 
+Thank you: trclassic92, and Kolvvy for the Pull Requests.
+Sorry I didn't credit you sooner
+-Your1000pa
